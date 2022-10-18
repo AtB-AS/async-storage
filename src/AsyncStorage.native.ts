@@ -49,6 +49,19 @@ const AsyncStorage = ((): AsyncStorageStatic => {
   let _immediate: ReturnType<typeof setImmediate> | null = null;
 
   return {
+    setAppGroupName: (groupName, callback) => {
+      return new Promise((resolve, reject) => {
+        RCTAsyncStorage.setAppGroupName(groupName, (error?: ErrorLike) => {
+          const err = convertError(error);
+          callback?.(err);
+          if (err) {
+            reject(err);
+          } else {
+            resolve(undefined);
+          }
+        });
+      });
+    },
     /**
      * Fetches an item for a `key` and invokes a callback upon completion.
      *

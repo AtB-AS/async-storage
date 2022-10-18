@@ -42,6 +42,7 @@ export type AsyncStorageHook = {
  * See https://react-native-async-storage.github.io/async-storage/docs/api
  */
 export type AsyncStorageStatic = {
+  setAppGroupName: (groupName: string, callback?: Callback) => Promise<void>;
   /**
    * Fetches an item for a `key` and invokes a callback upon completion.
    *

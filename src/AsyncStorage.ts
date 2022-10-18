@@ -67,6 +67,12 @@ function createPromiseAll<ReturnType, Result, ResultProcessor extends Function>(
 
 const AsyncStorage: AsyncStorageStatic = {
   /**
+   * Sets `groupName` value.
+   */
+  setAppGroupName: (_groupName, callback) => {
+    return createPromise(() => undefined, callback);
+  },
+  /**
    * Fetches `key` value.
    */
   getItem: (key, callback) => {

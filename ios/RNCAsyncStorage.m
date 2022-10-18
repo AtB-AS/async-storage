@@ -19,6 +19,7 @@ static NSString *const RCTOldStorageDirectory = @"RNCAsyncLocalStorage_V1";
 static NSString *const RCTExpoStorageDirectory = @"RCTAsyncLocalStorage";
 static NSString *const RCTManifestFileName = @"manifest.json";
 static const NSUInteger RCTInlineValueThreshold = 1024;
+static NSString *AppGroupName;
 
 #pragma mark - Static helper functions
 
@@ -134,9 +135,14 @@ static NSString *RCTCreateStorageDirectoryPath(NSString *storageDir)
     storageDirectoryPath =
         NSSearchPathForDirectoriesInDomains(NSCachesDirectory, NSUserDomainMask, YES).firstObject;
 #else
-    storageDirectoryPath =
+    if (!AppGroupName) {
+        storageDirectoryPath =
         NSSearchPathForDirectoriesInDomains(NSApplicationSupportDirectory, NSUserDomainMask, YES)
             .firstObject;
+    } else {
+        NSURL *pathUrl = [[NSFileManager defaultManager] containerURLForSecurityApplicationGroupIdentifier:AppGroupName];
+        storageDirectoryPath = pathUrl.path;
+    }
     // We should use the "Application Support/[bundleID]" folder for persistent data storage that's
     // hidden from users
     storageDirectoryPath = [storageDirectoryPath
@@ -663,7 +669,20 @@ RCT_EXPORT_MODULE()
         [self.delegate respondsToSelector:@selector(isPassthrough)] && self.delegate.isPassthrough;
 }
 
+-(void)_setGroupName:(NSString *)groupName {
+    AppGroupName = groupName;
+}
+
 #pragma mark - Exported JS Functions
+
+// clang-format off
+RCT_EXPORT_METHOD(setAppGroupName:(NSString*)groupName
+                  callback:(RCTResponseSenderBlock)callback)
+// clang-format on
+{
+    [self _setGroupName: groupName];
+    callback(@[RCTNullIfNil(nil)]);
+}
 
 // clang-format off
 RCT_EXPORT_METHOD(multiGet:(NSArray<NSString *> *)keys
