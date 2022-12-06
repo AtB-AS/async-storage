@@ -670,8 +670,8 @@ RCT_EXPORT_METHOD(setAppGroupName:(NSString*)groupName
                   callback:(RCTResponseSenderBlock)callback)
 // clang-format on
 {
-    [self clearAllData];
     [self _setGroupName: groupName];
+    [self invalidate];
     callback(@[RCTNullIfNil(nil)]);
 }
 
