@@ -158,7 +158,12 @@ static NSString *RCTCreateStorageDirectoryPath(NSString *storageDir)
 
 static NSString *RCTGetStorageDirectory()
 {
-    return RCTCreateStorageDirectoryPath(RCTStorageDirectory);
+    static NSString *storageDirectory = nil;
+    static dispatch_once_t onceToken;
+    dispatch_once(&onceToken, ^{
+        storageDirectory = RCTCreateStorageDirectoryPath(RCTStorageDirectory);
+    });
+    return storageDirectory;
 }
 
 static NSString *RCTCreateManifestFilePath(NSString *storageDirectory)
@@ -168,7 +173,12 @@ static NSString *RCTCreateManifestFilePath(NSString *storageDirectory)
 
 static NSString *RCTGetManifestFilePath()
 {
-    return RCTCreateManifestFilePath(RCTStorageDirectory);
+    static NSString *manifestFilePath = nil;
+    static dispatch_once_t onceToken;
+    dispatch_once(&onceToken, ^{
+        manifestFilePath = RCTCreateManifestFilePath(RCTStorageDirectory);
+    });
+    return manifestFilePath;
 }
 
 // Only merges objects - all other types are just clobbered (including arrays)
@@ -670,7 +680,11 @@ RCT_EXPORT_METHOD(setAppGroupName:(NSString*)groupName
                   callback:(RCTResponseSenderBlock)callback)
 // clang-format on
 {
+    NSString *oldDirectory = RCTCreateStorageDirectoryPath(RCTStorageDirectory);
     [self _setGroupName: groupName];
+    NSString *newDirectory = RCTCreateStorageDirectoryPath(RCTStorageDirectory);
+    // Move files from previous location to a new one in the group
+    RCTStorageDirectoryMigrationCheck(oldDirectory, newDirectory, YES);
     callback(@[RCTNullIfNil(nil)]);
 }
 
