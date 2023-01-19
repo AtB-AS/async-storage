@@ -680,6 +680,7 @@ RCT_EXPORT_METHOD(setAppGroupName:(NSString*)groupName
                   callback:(RCTResponseSenderBlock)callback)
 // clang-format on
 {
+    [self _setGroupName: NULL];
     NSString *oldDirectory = RCTCreateStorageDirectoryPath(RCTStorageDirectory);
     [self _setGroupName: groupName];
     NSString *newDirectory = RCTCreateStorageDirectoryPath(RCTStorageDirectory);
